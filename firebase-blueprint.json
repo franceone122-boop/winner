@@ -1,0 +1,228 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Registered punter or operator account in the VoltBet sportsbook",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique user identifier matching auth UID"
+        },
+        "fullName": {
+          "type": "string",
+          "description": "Punter full name"
+        },
+        "email": {
+          "type": "string",
+          "description": "Punter email address"
+        },
+        "phone": {
+          "type": "string",
+          "description": "Punter mobile phone number"
+        },
+        "role": {
+          "type": "string",
+          "enum": ["user", "admin"],
+          "description": "System role (user or admin)"
+        },
+        "balance": {
+          "type": "number",
+          "description": "Real cash balance in RWF"
+        },
+        "bonusBalance": {
+          "type": "number",
+          "description": "Freebet bonus balance in RWF"
+        },
+        "currency": {
+          "type": "string",
+          "description": "Currency code (default RWF)"
+        },
+        "dailyDepositLimit": {
+          "type": "number",
+          "description": "Maximum allowed deposit in 24 hours"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "ISO timestamp of account creation"
+        }
+      },
+      "required": ["id", "fullName", "role", "balance"]
+    },
+    "MatchEvent": {
+      "title": "MatchEvent",
+      "description": "Sports fixture with betting markets and real-time scores",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Match ID"
+        },
+        "sportId": {
+          "type": "string",
+          "description": "Sport identifier"
+        },
+        "leagueId": {
+          "type": "string",
+          "description": "League identifier"
+        },
+        "leagueName": {
+          "type": "string",
+          "description": "Full league and country name"
+        },
+        "country": {
+          "type": "string",
+          "description": "Country of the tournament"
+        },
+        "homeTeamName": {
+          "type": "string",
+          "description": "Home team name"
+        },
+        "awayTeamName": {
+          "type": "string",
+          "description": "Away team name"
+        },
+        "isLive": {
+          "type": "boolean",
+          "description": "Whether match is currently in-play"
+        },
+        "liveMinute": {
+          "type": "string",
+          "description": "Current minute of play if live"
+        },
+        "homeScore": {
+          "type": "number",
+          "description": "Live home score"
+        },
+        "awayScore": {
+          "type": "number",
+          "description": "Live away score"
+        },
+        "startTime": {
+          "type": "string",
+          "description": "Kickoff time or date"
+        },
+        "marketsCount": {
+          "type": "number",
+          "description": "Number of available wagering markets"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["upcoming", "live", "ended"],
+          "description": "Status of the match"
+        }
+      },
+      "required": ["id", "sportId", "leagueName", "homeTeamName", "awayTeamName"]
+    },
+    "PlacedBet": {
+      "title": "PlacedBet",
+      "description": "A sports betting ticket placed by a punter",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Ticket ID"
+        },
+        "userId": {
+          "type": "string",
+          "description": "UID of punter who placed the bet"
+        },
+        "bookingCode": {
+          "type": "string",
+          "description": "Human-readable booking code e.g. VB-8841"
+        },
+        "stake": {
+          "type": "number",
+          "description": "Wagered stake amount in RWF"
+        },
+        "totalOdds": {
+          "type": "number",
+          "description": "Cumulative ticket odds"
+        },
+        "potentialPayout": {
+          "type": "number",
+          "description": "Expected payout if all selections win"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["pending", "won", "lost", "cashed_out", "void"],
+          "description": "Bet settlement status"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["single", "accumulator", "system"],
+          "description": "Type of ticket"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "ISO timestamp of ticket creation"
+        }
+      },
+      "required": ["id", "userId", "bookingCode", "stake", "totalOdds", "potentialPayout", "status"]
+    },
+    "Transaction": {
+      "title": "Transaction",
+      "description": "Financial ledger entry for deposits, withdrawals, and payouts",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Transaction ID"
+        },
+        "userId": {
+          "type": "string",
+          "description": "Account UID"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["deposit", "withdrawal", "bet_placed", "bet_payout", "bonus_credited"],
+          "description": "Transaction type"
+        },
+        "amount": {
+          "type": "number",
+          "description": "Transaction amount in RWF"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["completed", "pending", "failed"],
+          "description": "Transaction status"
+        },
+        "reference": {
+          "type": "string",
+          "description": "Payment reference e.g. MTN MoMo transaction ID"
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "ISO timestamp"
+        }
+      },
+      "required": ["id", "userId", "type", "amount", "status"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": {
+        "$ref": "UserProfile"
+      },
+      "description": "Stores user account balances, preferences and profile data"
+    },
+    "/matches/{matchId}": {
+      "schema": {
+        "$ref": "MatchEvent"
+      },
+      "description": "Public catalog of sports fixtures and live odds"
+    },
+    "/placed_bets/{betId}": {
+      "schema": {
+        "$ref": "PlacedBet"
+      },
+      "description": "Punter betting tickets and settlements"
+    },
+    "/transactions/{transactionId}": {
+      "schema": {
+        "$ref": "Transaction"
+      },
+      "description": "Financial ledger of all deposits, withdrawals and payouts"
+    }
+  }
+}

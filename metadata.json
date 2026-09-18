@@ -1,0 +1,6 @@
+{
+  "name": "Winner - Sports Betting & Online Gaming",
+  "description": "The official Winner sports betting platform featuring live in-play odds, instant MTN and Airtel Mobile Money deposits, Aviator, Casino, and real-time betslip.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
